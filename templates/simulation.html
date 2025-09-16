@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Maintenance Application - Simulation</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles for a minimal and premium look */
+        body {
+            font-family: 'Roboto', sans-serif; /* Using a clean, modern font */
+            margin: 0;
+            background-color: #f8f9fa; /* Light gray background */
+            color: #343a40; /* Dark charcoal for primary text */
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #343a40;
+        }
+
+        /* Custom CSS - adjusted for Bootstrap and premium look */
+        .metric-card {
+            border: 1px solid #e9ecef; /* Lighter border */
+            border-radius: 0.375rem; /* Bootstrap's default border-radius */
+            padding: 15px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Subtle shadow */
+            margin-bottom: 15px;
+            background-color: #fff;
+            text-align: center;
+        }
+        .metric-card .label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .metric-card .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        /* Custom button color for a premium feel */
+        .btn-custom-accent {
+            background-color: #4a69bd; /* Muted professional blue */
+            color: white;
+            border-color: #4a69bd;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .btn-custom-accent:hover {
+            background-color: #3a57a3; /* Slightly darker on hover */
+            border-color: #3a57a3;
+            color: white;
+        }
+
+        /* Custom slider label font size */
+        .slider-label {
+            font-size: 1.1em; /* Slightly smaller, more refined font size */
+            font-weight: 500; /* Medium font weight */
+            margin-bottom: 8px;
+            color: #495057; /* Slightly darker gray for labels */
+        }
+
+        .container-fluid {
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+        .tab-content-flask {
+            border: 1px solid #dee2e6;
+            border-top: none;
+            padding: 0 25px 25px 25px; /* Removed top padding */
+            background-color: #fff;
+            border-bottom-left-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Subtle shadow for tab content */
+        }
+        .tab-pane {
+            padding-top: 25px; /* Added top padding to the tab content itself */
+        }
+        .nav-tabs .nav-link {
+            color: #6c757d; /* Muted gray for inactive tabs */
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+            transition: color 0.2s ease-in-out;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+            color: #343a40; /* Darker text for active tab */
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link:hover {
+            color: #4a69bd; /* Accent color on hover */
+            border-color: #e9ecef #e9ecef #dee2e6;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .prediction-result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 0.375rem;
+        }
+        .form-range::-webkit-slider-thumb {
+            background-color: #4a69bd; /* Match slider thumb to accent color */
+        }
+        .form-range::-moz-range-thumb {
+            background-color: #4a69bd;
+        }
+        .form-range::-ms-thumb {
+            background-color: #4a69bd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1 class="mb-4 text-center">Predictive Maintenance Application</h1>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="predictive-tab" href="/">Predictive Maintenance</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="simulation-tab" href="/simulation_page">Simulation</a>
+                    </li>
+                </ul>
+                <div class="tab-content-flask" id="myTabContent">
+                    <div class="tab-pane fade show active" id="simulation" role="tabpanel" aria-labelledby="simulation-tab">
+                        <h3 class="mb-4 mt-0">Simulation View</h3>
+                        <p>Click the button below to simulate a random data point and get a prediction.</p>
+                        <button id="simulateButton" class="btn btn-custom-accent mb-4">Simulate on New Data</button>
+
+                        <div id="simulationResults" style="display: none;">
+                            <h4 class="mb-3">Randomly Selected Data Point:</h4>
+                            <div class="row" id="simulatedMetrics"></div>
+
+                            <h4 class="mt-4 mb-3">Prediction Result:</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="metric-card">
+                                        <div class="label">Predicted Failure</div>
+                                        <div class="value" id="predictedFailure"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="metric-card">
+                                        <div class="label">Actual Failure</div>
+                                        <div class="value" id="actualFailure"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert mt-3" role="alert" id="simulationPredictionAlert"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const simulateButton = document.getElementById('simulateButton');
+            const simulationResultsDiv = document.getElementById('simulationResults');
+            const simulatedMetricsDiv = document.getElementById('simulatedMetrics');
+            const predictedFailureDiv = document.getElementById('predictedFailure');
+            const actualFailureDiv = document.getElementById('actualFailure');
+            const simulationPredictionAlert = document.getElementById('simulationPredictionAlert');
+
+            simulateButton.addEventListener('click', fetchSimulationData);
+
+            function fetchSimulationData() {
+                fetch('/simulate')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error('Error fetching simulation data:', data.error);
+                            simulationPredictionAlert.className = 'alert alert-danger mt-3';
+                            simulationPredictionAlert.textContent = `Error: ${data.error}`;
+                            simulationPredictionAlert.style.display = 'block';
+                            simulationResultsDiv.style.display = 'block';
+                            return;
+                        }
+
+                        // Display simulated data metrics
+                        simulatedMetricsDiv.innerHTML = ''; // Clear previous metrics
+                        const featuresToDisplay = [
+                            'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]',
+                            'Torque [Nm]', 'Tool wear [min]', 'Type', 'Product ID', 'UID'
+                        ];
+                        let colCount = 0;
+                        for (const key of featuresToDisplay) {
+                            if (data.simulated_data.hasOwnProperty(key)) {
+                                const value = data.simulated_data[key];
+                                const colDiv = document.createElement('div');
+                                colDiv.className = 'col-md-3 col-sm-6'; // Responsive columns
+                                colDiv.innerHTML = `
+                                    <div class="metric-card">
+                                        <div class="label">${key.replace('[K]', '(K)').replace('[rpm]', '(rpm)').replace('[Nm]', '(Nm)').replace('[min]', '(min)')}</div>
+                                        <div class="value">${value}</div>
+                                    </div>
+                                `;
+                                simulatedMetricsDiv.appendChild(colDiv);
+                                colCount++;
+                            }
+                        }
+                        // Add failure types if they exist in simulated_data
+                        const failureTypes = ['TWF', 'HDF', 'PWF', 'OSF', 'RNF'];
+                        for (const failureType of failureTypes) {
+                            if (data.simulated_data.hasOwnProperty(failureType)) {
+                                const value = data.simulated_data[failureType] === 1 ? 'Yes' : 'No';
+                                const colDiv = document.createElement('div');
+                                colDiv.className = 'col-md-3 col-sm-6';
+                                colDiv.innerHTML = `
+                                    <div class="metric-card">
+                                        <div class="label">${failureType}</div>
+                                        <div class="value">${value}</div>
+                                    </div>
+                                `;
+                                simulatedMetricsDiv.appendChild(colDiv);
+                                colCount++;
+                            }
+                        }
+
+                        // Display prediction results
+                        predictedFailureDiv.textContent = data.prediction_text;
+                        actualFailureDiv.textContent = data.actual_failure_text;
+
+                        simulationPredictionAlert.style.display = 'block';
+                        if (data.prediction === 0) {
+                            simulationPredictionAlert.className = 'alert alert-success mt-3';
+                            simulationPredictionAlert.innerHTML = `
+                                <h4 class="alert-heading">Prediction: Not likely to fail.</h4>
+                                <p class="mb-0">Probability of failure: ${data.probability_of_failure}</p>
+                            `;
+                        } else {
+                            simulationPredictionAlert.className = 'alert alert-danger mt-3';
+                            simulationPredictionAlert.innerHTML = `
+                                <h4 class="alert-heading">Prediction: Likely to fail!</h4>
+                                <p class="mb-0">Probability of failure: ${data.probability_of_failure}</p>
+                            `;
+                        }
+
+                        simulationResultsDiv.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error during fetch:', error);
+                        simulationPredictionAlert.className = 'alert alert-danger mt-3';
+                        simulationPredictionAlert.textContent = 'An error occurred while fetching simulation data.';
+                        simulationPredictionAlert.style.display = 'block';
+                        simulationResultsDiv.style.display = 'block';
+                    });
+            }
+
+            // Initial load for simulation tab if it's active
+            const simulationTabButton = document.getElementById('simulation-tab');
+            simulationTabButton.addEventListener('shown.bs.tab', function (event) {
+                // Only fetch if results are not already displayed or if explicitly requested
+                if (simulationResultsDiv.style.display === 'none') {
+                    fetchSimulationData();
+                }
+            });
+
+            // Fetch initial data when the page loads if the simulation tab is active by default
+            if (document.getElementById('simulation').classList.contains('active')) {
+                fetchSimulationData();
+            }
+        });
+    </script>
+</body>
+</html>
