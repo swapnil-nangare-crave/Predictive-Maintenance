@@ -1,0 +1,11 @@
+pandas
+numpy
+scikit-learn
+streamlit
+joblib
+plotly
+seaborn
+matplotlib
+
+flask
+flask-cors
