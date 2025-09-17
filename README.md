@@ -25,7 +25,7 @@ To get this application up and running on your local machine, follow these steps
 
 1.  **Navigate to the Project Directory:**
     ```bash
-    cd "F:/Desktop/crave/AI + GEN AI RELATED/Predictive Maintenance UI"
+    cd  project
     ```
 
 2.  **Create a Virtual Environment (Recommended):**
